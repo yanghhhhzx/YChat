@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ychat.chat.mapper.MessageMapper">
+
+
+    <select id="selectMessageByChatIdAndTime" resultType="com.ychat.chat.domain.Message">
+        select * from message_0 where chat in
+        #         下面是字符串拼接，可以将集合"setmealIds"中的值粘接
+        <foreach collection="chatIds" item="chatId" separator="," open="(" close=")">
+            #{chatId}
+        </foreach>
+        and send_time>#{time}
+    </select>
+
+</mapper>

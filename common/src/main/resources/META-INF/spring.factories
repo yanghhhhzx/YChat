@@ -1,4 +1,5 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.ychat.common.config.MyBatisConfig,\
   com.ychat.common.config.MvcConfig,\
-  com.ychat.common.config.JsonConfig
+  com.ychat.common.config.JsonConfig,\
+  com.ychat.common.config.RedisConfigration

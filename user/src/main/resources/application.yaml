@@ -1,18 +1,21 @@
 server:
   port: 8084
+
 spring:
   application:
     name: user
-  profiles:
-    active: dev
   datasource:
-    url: jdbc:mysql://${ychat.db.host}:3306/ychat-user?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: ${ychat.db.pw}
+    url: jdbc:shardingsphere:classpath:shardingsphere-config.yaml
+    driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
   cloud:
     nacos:
       server-addr: 192.168.232.128:8848 # nacos地址
+  redis:
+    host: localhost
+    post: 6379
+    database: 10
+# todo nacos的用户名跟密码
+
 mybatis-plus:
   configuration:
     default-enum-type-handler: com.baomidou.mybatisplus.core.handlers.MybatisEnumTypeHandler
@@ -20,6 +23,7 @@ mybatis-plus:
     db-config:
       update-strategy: not_null
       id-type: auto
+
 logging:
   level:
     com.ychat: debug
@@ -27,6 +31,7 @@ logging:
     dateformat: HH:mm:ss:SSS
   file:
     path: "logs/${spring.application.name}"
+
 knife4j:
   enable: true
   openapi:
@@ -44,4 +49,4 @@ ychat:
     location: classpath:ychat.jks
     alias: hmall
     password: hmall123
-    tokenTTL: 30m
+    tokenTTL: 5126400m

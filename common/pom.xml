@@ -6,15 +6,15 @@
     <parent>
         <groupId>com.ychat</groupId>
         <artifactId>ychat</artifactId>
-        <version>1.0.0</version>
+        <version>0.0.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>common</artifactId>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>20</maven.compiler.source>
+        <maven.compiler.target>20</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -92,5 +92,12 @@
             <artifactId>jackson-dataformat-xml</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <!--Spring data redis -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
     </dependencies>
 </project>

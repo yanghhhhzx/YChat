@@ -29,7 +29,7 @@ public class JwtTool {
     public String createToken(Long userId, Duration ttl) {
         // 1.生成jws
         return JWT.create()
-                .setPayload("com/ychat/user", userId)
+                .setPayload("user", userId)
                 .setExpiresAt(new Date(System.currentTimeMillis() + ttl.toMillis()))
                 .setSigner(jwtSigner)
                 .sign();
@@ -53,6 +53,7 @@ public class JwtTool {
         } catch (Exception e) {
             throw new UnauthorizedException("无效的token", e);
         }
+        //上面这一步将token赋值给了jwt
         // 2.校验jwt是否有效
         if (!jwt.verify()) {
             // 验证失败
@@ -64,8 +65,8 @@ public class JwtTool {
         } catch (ValidateException e) {
             throw new UnauthorizedException("token已经过期");
         }
-        // 4.数据格式校验
-        Object userPayload = jwt.getPayload("com/ychat/user");
+        // todo 4.数据格式校验 这里会出bug
+        Object userPayload = jwt.getPayload("user");
         if (userPayload == null) {
             // 数据为空
             throw new UnauthorizedException("无效的token");

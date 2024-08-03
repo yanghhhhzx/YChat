@@ -1,4 +1,0 @@
-ychat:
-  db:
-    host: mysql
-    pw: 123

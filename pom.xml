@@ -13,21 +13,23 @@
 
     <groupId>com.ychat</groupId>
     <artifactId>ychat</artifactId>
-    <version>1.0.0</version>
+    <version>0.0.1-SNAPSHOT</version>
     <name>ychat</name>
 
     <modules>
         <module>user</module>
         <module>common</module>
         <module>api</module>
+        <module>gateway</module>
+        <module>chat</module>
     </modules>
 
     <packaging>pom</packaging>
     <description>ychat</description>
 
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>20</maven.compiler.source>
+        <maven.compiler.target>20</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <org.projectlombok.version>1.18.20</org.projectlombok.version>
@@ -90,6 +92,7 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
 
     </dependencies>
 

@@ -1,0 +1,42 @@
+dataSources:
+  ds_0:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    jdbcUrl: jdbc:mysql://192.168.232.128:3306/ychat_chat_0?useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123
+
+  ds_1:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    jdbcUrl: jdbc:mysql://192.168.232.128:3306/ychat_chat_1?useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123
+
+rules:
+  - !SHARDING
+    tables:
+      chat:
+        actualDataNodes: ds_${0..1}.chat_${0..1}
+        databaseStrategy:
+          standard:
+            shardingColumn: id
+            shardingAlgorithmName: chat_database_hash_mod
+        tableStrategy:
+          standard:
+            shardingColumn: id
+            shardingAlgorithmName: chat_table_hash_mod
+
+    shardingAlgorithms:
+      chat_database_hash_mod:
+        type: MOD
+        props:
+          sharding-count: 2
+
+      chat_table_hash_mod:
+        type: MOD
+        props:
+          sharding-count: 2
+
+props:
+  sql-show: true

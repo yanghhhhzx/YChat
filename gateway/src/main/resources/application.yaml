@@ -1,0 +1,43 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      server-addr: 192.168.232.128:8848
+    gateway:
+      routes:
+        - id: user
+          uri: lb://user     # 路由的目标服务，lb代表负载均衡，会从注册中心拉取服务列表
+          predicates:        # 路由断言，判断当前请求是否符合当前规则，符合则路由到目标服务
+            - Path=/users/** # 这里是以请求路径作为判断规则,“不是！”他要发往的路径
+          filters:
+            - Login          # 下面已经排除了登录的，所以这里需要拦截那些没登录的
+
+         # 建立ws连接的路由   SockJS route
+        - id: websocket_sockjs_route
+          uri: http://localhost:8888/ws
+          predicates:
+           - Path=/websocket/info/**
+          filters:
+           - Login
+
+         # 发送ws包的路由  Normal Websocket route
+        - id: websocket_route
+          uri: ws://localhost:8888/ws
+          predicates:
+           - Path=/websocket/**
+
+
+ychat:
+  jwt:
+    location: classpath:ychat.jks # 秘钥地址
+    alias: hmall # 秘钥别名
+    password: hmall123 # 秘钥文件密码
+    tokenTTL: 30m # 登录有效期
+  auth:
+    excludePaths: # 无需登录校验的路径
+      - /search/**
+      - /users/login
+      - /items/**

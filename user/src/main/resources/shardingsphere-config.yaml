@@ -1,0 +1,56 @@
+dataSources:
+  ds_0:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    jdbcUrl: jdbc:mysql://192.168.232.128:3306/ychat_user_0?useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123
+
+  ds_1:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    jdbcUrl: jdbc:mysql://192.168.232.128:3306/ychat_user_1?useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123
+
+rules:
+  - !SHARDING
+    tables:
+      user:
+        actualDataNodes: ds_${0..1}.user_${0..1}
+        databaseStrategy:
+          standard:
+            shardingColumn: username
+            shardingAlgorithmName: user_database_hash_mod
+        tableStrategy:
+          standard:
+            shardingColumn: username
+            shardingAlgorithmName: user_table_hash_mod
+
+    shardingAlgorithms:
+      user_database_hash_mod:
+        type: HASH_MOD
+        props:
+          sharding-count: 2
+
+      user_table_hash_mod:
+        type: HASH_MOD
+        props:
+          sharding-count: 2
+  - !ENCRYPT
+#    加密
+    tables:
+      user:
+        columns:
+          phone:
+            cipherColumn: phone
+            encryptorName: phone_encryptor
+# 加密算法选择，这里使用aes加密
+    encryptors:
+      phone_encryptor:
+        type: AES
+        props:
+#          这个是秘钥
+          aes-key-value: yanghhhhzx1688nb
+props:
+  sql-show: true
