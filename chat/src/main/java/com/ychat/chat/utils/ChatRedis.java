@@ -1,12 +1,13 @@
 package com.ychat.chat.utils;
 
+import com.ychat.chat.domain.Message;
 import com.ychat.common.utils.transition.Transition;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Slf4j
@@ -63,6 +64,38 @@ public class ChatRedis {
 
     public void setLastTime(String userId) {
         redisTemplate.opsForValue().set(userId+"_UnReadChat",userId);
+    }
+
+
+
+//********************************************************************************************
+    //下面两个没用的
+    public void saveMessageIntoRedis(Message msg) {
+        HashOperations hashOperations = redisTemplate.opsForHash();
+
+        hashOperations.put("message_"+msg.getId(),"content", msg.getContent());
+        hashOperations.put("message_"+msg.getId(),"send", msg.getSender());
+        hashOperations.put("message_"+msg.getId(),"chat", msg.getChat());
+        hashOperations.put("message_"+msg.getId(),"sendTime", msg.getSendTime());
+        hashOperations.put("message_"+msg.getId(),"tag", msg.getTag().toString());
+        //hash类型数据不支持设置过期时间，所以只能使用rabbitMq延时消息来实现定时删除
+    }
+    public Message getMessagesFromRedis(String messageId) {
+        HashOperations hashOperations = redisTemplate.opsForHash();
+
+        Message message = new Message();
+        //将信息读取到一个message里返回
+        message.setChat(Long.parseLong(
+                        (String) hashOperations.get("message_" + messageId, "chat")
+                )
+        );
+        message.setContent((String) hashOperations.get("message_"+messageId, "content"));
+        message.setSender((String) hashOperations.get("message_"+messageId, "send"));
+        message.setSendTime((String) hashOperations.get("message_"+messageId, "chat"));
+        message.setTag(
+                Integer.parseInt(
+                        (String) hashOperations.get("message_" + messageId, "chat")));
+        return message;
     }
 }
 

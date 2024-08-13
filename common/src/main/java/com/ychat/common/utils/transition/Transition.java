@@ -23,8 +23,11 @@ public class Transition {
 
     //将可根据，分割的string转为可编辑的list
     public static List<String> StringToList(String str) {
-
         return new ArrayList<>(Arrays.asList(str.split(",")));
+    }
+
+    public static Set<String> StringToSet(String str) {
+        return new HashSet<>(Arrays.asList(str.split(",")));
     }
 
 

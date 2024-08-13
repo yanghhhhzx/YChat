@@ -5,5 +5,7 @@ import com.ychat.chat.domain.Chat;
 
 public interface ChatService extends IService<Chat> {
 
-    public void addChat(Chat chat);
+    void addChat(Chat chat);
+
+    void addChatMembers(Chat chat);
 }

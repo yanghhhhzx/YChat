@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: user
+    name: user_service
   datasource:
     url: jdbc:shardingsphere:classpath:shardingsphere-config.yaml
     driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
@@ -49,4 +49,4 @@ ychat:
     location: classpath:ychat.jks
     alias: hmall
     password: hmall123
-    tokenTTL: 5126400m
+    tokenTTL: 51264000m

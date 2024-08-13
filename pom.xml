@@ -22,6 +22,8 @@
         <module>api</module>
         <module>gateway</module>
         <module>chat</module>
+        <module>basic</module>
+        <module>Article</module>
     </modules>
 
     <packaging>pom</packaging>

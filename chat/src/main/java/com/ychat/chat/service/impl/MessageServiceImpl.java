@@ -24,44 +24,12 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper,Message> imple
     private final MessageMapper messageMapper;
 
     //因为引入了common，所以可以拿到common中的拦截器，拿到
-    //todo 完成下面功能的开发
-    @Override
-    public void saveMessageIntoRedis(Message msg) {
-
-        HashOperations hashOperations = redisTemplate.opsForHash();
-
-        hashOperations.put("message_"+msg.getId(),"content", msg.getContent());
-        hashOperations.put("message_"+msg.getId(),"send", msg.getSender());
-        hashOperations.put("message_"+msg.getId(),"chat", msg.getChat());
-        hashOperations.put("message_"+msg.getId(),"sendTime", msg.getSendTime());
-        hashOperations.put("message_"+msg.getId(),"tag", msg.getTag().toString());
-        //hash类型数据不支持设置过期时间，所以只能使用rabbitMq延时消息来实现定时删除
-
-    }
 
     @Override
     public void saveMessageIntoMysql(Message message) {
         save(message);
     }
 
-    @Override
-    public Message getMessagesFromRedis(String messageId) {
-        HashOperations hashOperations = redisTemplate.opsForHash();
-
-        Message message = new Message();
-        //将信息读取到一个message里返回
-        message.setChat(Long.parseLong(
-                        (String) hashOperations.get("message_" + messageId, "chat")
-                )
-        );
-        message.setContent((String) hashOperations.get("message_"+messageId, "content"));
-        message.setSender((String) hashOperations.get("message_"+messageId, "send"));
-        message.setSendTime((String) hashOperations.get("message_"+messageId, "chat"));
-        message.setTag(
-                Integer.parseInt(
-                        (String) hashOperations.get("message_" + messageId, "chat")));
-        return message;
-    }
 
     /**
      * 查找LastTime之后发送的信息，且在对应群聊发送的信息

@@ -1,6 +1,6 @@
 package com.ychat.api.config;
 
-import com.hmall.common.utils.UserContext;
+import com.ychat.common.utils.UserContext;
 import feign.Logger;
 import feign.RequestInterceptor;
 import feign.RequestTemplate;

@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: user
+    name: chat
   datasource:
     url: jdbc:shardingsphere:classpath:shardingsphere-config.yaml
     driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
@@ -11,9 +11,10 @@ spring:
     nacos:
       server-addr: 192.168.232.128:8848 # nacos地址
   redis:
-    host: localhost
+    host: 192.168.232.128
     post: 6379
     database: 10
+
 # todo nacos的用户名跟密码
 
 mybatis-plus:

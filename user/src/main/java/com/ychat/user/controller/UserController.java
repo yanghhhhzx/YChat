@@ -14,7 +14,6 @@ import com.ychat.user.domain.dto.LoginFormDTO;
 import com.ychat.user.domain.vo.UserLoginVO;
 import com.ychat.user.service.IUserService;
 import org.springframework.web.multipart.MultipartFile;
-import org.yaml.snakeyaml.events.Event;
 
 import java.io.File;
 import java.io.IOException;

@@ -18,7 +18,7 @@ public class Message {
     private String id;
     private String content;
     private String sendTime;
-    private String sender;
+    private String sender;      //发送者id
     private Long chat;          //归属群聊
     private Integer tag;        //用来标记是群聊消息还是单聊消息？或者用来做其他的标记？？
     private int type;           //类型（图片、视频、信息等）

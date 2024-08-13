@@ -7,11 +7,9 @@ import java.util.List;
 
 public interface MessageService extends IService<Message> {
 
-    void saveMessageIntoRedis(Message message);
 
     void saveMessageIntoMysql(Message message);
 
-    Message getMessagesFromRedis(String messageId);
 
     List<Message> getNewMessagesFromMysql(List<Long> ChatIds, String time);
 }

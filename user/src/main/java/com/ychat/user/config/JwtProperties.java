@@ -13,5 +13,5 @@ public class JwtProperties {
     private String password;
     private String alias;
     //todo 我现在设置了token可用时间为100年
-    private Duration tokenTTL = Duration.ofMinutes(10);
+    private Duration tokenTTL = Duration.ofMinutes(1);
 }

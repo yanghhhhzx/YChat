@@ -2,14 +2,18 @@ package com.ychat.api.client;
 
 
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient("user-service")
+import java.util.List;
+
+@FeignClient("user_service")
 public interface UserClient {
 
-    @PutMapping("/users/money/deduct")
-    void deductMoney(@RequestParam("pw") String pw,@RequestParam("amount") Integer amount);
+//    @PutMapping("/users/money/deduct")
+//    void deductMoney(@RequestParam("pw") String pw,@RequestParam("amount") Integer amount);
 
+    @GetMapping("/users/existUsers")
+    int existUsers(@RequestBody List<String> userIds);
 
 }
