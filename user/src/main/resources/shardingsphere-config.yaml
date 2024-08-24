@@ -38,7 +38,7 @@ rules:
         props:
           sharding-count: 2
   - !ENCRYPT
-#    加密
+#    加密,可以保证就算书库
     tables:
       user:
         columns:
@@ -50,7 +50,7 @@ rules:
       phone_encryptor:
         type: AES
         props:
-#          这个是秘钥
-          aes-key-value: yanghhhhzx1688nb
+#   这个是秘钥，我记得aes的密钥是有安全性要求的，下面这个我乱写的，是不符合规范的，仅做展示
+          aes-key-value: yangyangzxyangzx
 props:
   sql-show: true

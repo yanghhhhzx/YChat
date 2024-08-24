@@ -2,6 +2,7 @@ package com.ychat.chat.config;
 
 import com.ychat.chat.service.ChatService;
 import com.ychat.chat.service.MessageService;
+import com.ychat.chat.service.Producer;
 import com.ychat.chat.utils.ChannelContext;
 import com.ychat.chat.utils.ChatRedis;
 import com.ychat.chat.utils.JwtTool;
@@ -21,6 +22,8 @@ import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 
@@ -34,7 +37,9 @@ public class WebSocketConfig {
     private final MessageService messageService;
     private final ChatService chatService;
     private final JwtTool jwtTool;
-
+    private final Producer producer;
+    @Value("${websocket.port}")
+    public static String websocketPost;
 
     // 在应用启动时启动Netty服务器
     @PostConstruct
@@ -53,7 +58,6 @@ public class WebSocketConfig {
                     protected void initChannel(SocketChannel ch) throws Exception {
                         ChannelPipeline pipeline = ch.pipeline();
                         /**
-                         *  经过测试，同样是inboundHandler先后addLast其实不影响他的执行顺序！！！
                          *  当有消息进来时，他会根据pipeline一步一步往下走，执行完一个传递给下一个ChannelHandler
                          */
                         // Http编解码器
@@ -71,7 +75,7 @@ public class WebSocketConfig {
                         //完成过滤器功能，将token检验并转为userinfo，测试通过
                         pipeline.addLast("filter",new FilterHandler(jwtTool));
                         //用于获取http请求的请求头中的userinfo
-                        pipeline.addLast("http", new HttpRequestHandler(chatRedis, channelContext,messageService));
+                        pipeline.addLast("http", new HttpRequestHandler(chatRedis,messageService));
 
 
                         // 处理WebSocket升级握手、Ping、Pong等消息
@@ -79,18 +83,18 @@ public class WebSocketConfig {
                         pipeline.addLast(new WebSocketServerProtocolHandler("/ws"));
                         // 自定义WebSocket处理器
 
-                        pipeline.addLast(new MyWebSocketHandler(messageService, chatService, chatRedis));
+                        pipeline.addLast(new MyWebSocketHandler(messageService, chatService, chatRedis,producer));
 
 
                     }
                 });
         //绑定端口启动netty服务
-        serverBootstrap.bind(8888)
+        serverBootstrap.bind(Integer.parseInt(websocketPost))
                 .addListener((ChannelFutureListener) future -> {
                     if (future.isSuccess()) {
-                        System.out.println("Netty Server started on port 8888");
+                        System.out.println("netty服务开启成功");
                     } else {
-                        System.err.println("Netty Server start failed on port 8888");
+                        System.err.println("netty服务开启失败");
                     }
                 });
     }

@@ -16,6 +16,8 @@ import com.ychat.api.client.UserClient;
 
 import java.util.List;
 
+import static com.ychat.chat.websocket.MyWebSocketHandler.channels;
+
 @Api(tags = "群聊相关接口")
 @RestController
 @RequestMapping("/chat")
@@ -53,16 +55,26 @@ public class ChatController {
 
     //用于发送信息。
     //todo 测试和修改
-    @PostMapping(value = "sendMessage/{channelId}")
-    public int sendMessage(@RequestBody Message message,@PathVariable String channelId ) {
+//    @PostMapping(value = "sendMessage/{channelId}")
+//    public int sendMessageByChannelId(@RequestBody Message message,@PathVariable String channelId ) {
+//
+////        遍历当前实例的ChannelGroup，找到对应的channel
+//        for (ChannelHandlerContext channel : MyWebSocketHandler.channelGroup) {
+//            if (channel.channel().id().toString().equals(channelId)) {
+//                channel.writeAndFlush(message);
+//                return 1;//代表发送消息成功
+//            }
+//        }
+//        return 0;//代表发送消息发送失败，找错了端口
+//    }
 
-//        遍历当前实例的ChannelGroup，找到对应的channel
-        for (ChannelHandlerContext channel : MyWebSocketHandler.channelGroup) {
-            if (channel.channel().id().toString().equals(channelId)) {
-                channel.writeAndFlush(message);
-                return 1;//代表发送消息成功
-            }
-        }
-        return 0;//代表发送消息发送失败，找错了端口
+    //用于发送信息。
+    //todo 测试和修改
+    @PostMapping(value = "sendMessage/{channelId}")
+    public int sendMessageByUserId(@RequestBody Message message,@PathVariable String UserId ) {
+        channels.get(UserId).writeAndFlush(message);;
+        return 1;
     }
+
+
 }

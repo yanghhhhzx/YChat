@@ -1,5 +1,6 @@
 package com.ychat.chat.websocket;
 
+import com.ychat.chat.config.WebSocketConfig;
 import com.ychat.chat.domain.Message;
 import com.ychat.chat.service.MessageService;
 import com.ychat.chat.utils.ChannelContext;
@@ -12,7 +13,7 @@ import com.ychat.common.utils.transition.Transition;
 
 import java.util.List;
 
-import static com.ychat.chat.websocket.MyWebSocketHandler.channelGroup;
+import static com.ychat.chat.websocket.MyWebSocketHandler.channels;
 
 /**
  * SimpleChannelInboundHandler用于处理入站请求
@@ -24,14 +25,11 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
     //
     private final ChatRedis channelRedis;
 
-    private final ChannelContext channelContext;
-
     private final MessageService messageService;
 
-    public HttpRequestHandler(ChatRedis channelRedis, ChannelContext channelContext, MessageService messageService) {
+    public HttpRequestHandler(ChatRedis channelRedis, MessageService messageService) {
 
         this.channelRedis = channelRedis;
-        this.channelContext = channelContext;
         this.messageService = messageService;
     }
 
@@ -44,12 +42,17 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
             System.out.println("获取到user"+userInfo);
 
             //把userid放入channel的上下文中，后面发送的时候要用
-            channelContext.addcontext(ctx.channel(),"userId",userInfo);
+            //下面这个ChannelContext是我自己定义的！不是netty包下的那个。
+            ChannelContext.addcontext(ctx.channel(),"userId",userInfo);
             System.out.println("保存成功");
 
-//            // 将channel和userid的对应关系保存到redis
-            channelRedis.addChannel(ctx.channel().id().toString(),userInfo);
-            System.out.println("已保存到redis");
+            //加入ConcurrentHashMap,使用用户id作为key
+            channels.put(ChannelContext.getcontext(ctx.channel(),"userId"),ctx);
+
+            // 将channel和userid的对应关系保存到redis
+            channelRedis.addPost(userInfo, WebSocketConfig.websocketPost);
+            System.out.println("post已保存到redis");
+
             //**************************************************
             //在解析http请求时，顺便获取未读信息
             //放在这里。保证他是只有在建立连接时会执行（因为只有建立连接是http）
@@ -70,8 +73,6 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         System.out.println("通道开启！");
-        //这个通道组定义在websocket
-        channelGroup.add(ctx);
         super.channelActive(ctx);
     }
 
@@ -89,7 +90,7 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
         String userId=ChannelContext.getcontext(ctx.channel(),"userId");
         channelRedis.removeUnReadChat(userId);//删除UnReadChat
         channelRedis.setLastTime(userId);//改LastTime
-        channelGroup.remove(ctx);
+        channels.remove(ctx.channel().toString());
         super.channelInactive(ctx);
     }
 

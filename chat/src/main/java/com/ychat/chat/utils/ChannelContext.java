@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class ChannelContext {
 
-//    在channel中添加一个名为keyname的key并赋值为userId
-    //在外部我保存的用户id的keyname为"userId"
+    //在channel中添加一个名为keyName的key并赋值为userId
+    //在外部我保存的用户id的keyName为"userId"
     public static void addcontext(Channel channel, String keyName,String userId){
         AttributeKey key = null;
         if (AttributeKey.exists(keyName)){//如果已经有了，那就是他

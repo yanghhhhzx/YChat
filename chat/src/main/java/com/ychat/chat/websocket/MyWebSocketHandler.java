@@ -1,32 +1,38 @@
 package com.ychat.chat.websocket;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.ychat.chat.config.WebSocketConfig;
 import com.ychat.chat.domain.Chat;
 import com.ychat.chat.domain.Message;
+import com.ychat.chat.domain.MessageToOne;
 import com.ychat.chat.service.ChatService;
 import com.ychat.chat.service.MessageService;
 import com.ychat.chat.utils.ChatRedis;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import com.ychat.chat.utils.ChannelContext;
 import com.ychat.common.utils.transition.Transition;
+import com.ychat.chat.service.Producer;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-
-/**
- * 只处理收发消息，其他的我都写在httpHandle
+/*
+  只处理收发消息，其他的我都写在httpHandle
  */
 public class MyWebSocketHandler extends SimpleChannelInboundHandler<TextWebSocketFrame> {
 
-    public static List<ChannelHandlerContext> channelGroup;
+    //新的用来记录channel的，使用用户id做key
+    //使用用户id来做key的话，用户就不能同时在多个地方同时登录了。
+    //如果要多个地方同时登录就得四合院channel做key，因为我暂时没有考虑多端登录就先用用户id
+    public static ConcurrentHashMap<String, ChannelHandlerContext> channels = new ConcurrentHashMap<>();
+//已经无用
+//    public static List<ChannelHandlerContext> channelGroup;
 
     private final MessageService messageService;
 
@@ -34,24 +40,20 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<TextWebSocke
 
     private final ChatRedis chatRedis;
 
-    static {
-        channelGroup = new ArrayList<>(); ;
-    }
+    private final Producer producer;
 
-    public MyWebSocketHandler(MessageService messageService, ChatService chatService, ChatRedis channelRedis) {
+    public MyWebSocketHandler(MessageService messageService, ChatService chatService, ChatRedis channelRedis, Producer producer) {
 
         this.messageService = messageService;
         this.chatService = chatService;
         this.chatRedis = channelRedis;
+        this.producer = producer;
     }
 
     /**
      * 已经通过拦截器拿到用户id了，放在ThreadLocal，现在需要把他放在channel里
      * （但是没有拿到账号，需要根据id查账号）
-     * @param ctx
-     * @throws Exception
      */
-
     // 服务器接受客户端的数据信息
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, TextWebSocketFrame msg) throws Exception {
@@ -75,19 +77,15 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<TextWebSocke
         // 2.根据将群聊成员列表遍历，根据redis查找在线的成员的channel。
         List<ChannelHandlerContext> channelHandlerContexts = new ArrayList<>();
         for (String memberId : memberIds) {
-            String c = chatRedis.getChannelId(memberId);
-            for (ChannelHandlerContext cha : channelGroup) {
-                if (ChannelContext.getcontext(ctx.channel(),"userId").equals(c)) {
-                    channelHandlerContexts.add(cha);
-                }
-            }
+            String post = chatRedis.getPost(memberId);
+            //利用RocketMQ发送异步消息
+            MessageToOne messageToOne=new MessageToOne();
+            //复制一个
+            BeanUtils.copyProperties(message,messageToOne);
+            messageToOne.setToOne(memberId);
+            if (post != null) {producer.asyncSend(WebSocketConfig.websocketPost,messageToOne);}
         }
-        if (!channelHandlerContexts.isEmpty()) {
-            // 3.向在线成员发送消息
-            System.out.println("向在线成员发送消息");
-            sendAllMessage(channelHandlerContexts, message);
-        }
-        //4.对信息包含的群聊的所有成员的未读群聊表进行更新（已经登录的人员会在断开连接时清除）
+        //3.对信息包含的群聊的所有成员的未读群聊表进行更新（已经登录的人员会在断开连接时清除）
         for (String memberId : memberIds) {
             if (message.getChat() != null) {
                 chatRedis.addChatIntoUnRead(message.getChat(), memberId);
@@ -96,17 +94,14 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<TextWebSocke
         super.channelRead(ctx, msg);
     }
 
-//     向固定的channel发消息
-    private void sendMessage(ChannelHandlerContext ctx, Message msg) {
-        ctx.channel().writeAndFlush(msg);
-    }
-
-    // 向指定的channel集合发送消息
-    private void sendAllMessage(List<ChannelHandlerContext> channelHandlerContexts, Message msg) {
-        for (ChannelHandlerContext cha : channelHandlerContexts) {
-            cha.writeAndFlush(msg);
+    public static int sendMessageByUserId(MessageToOne messageToOne){
+        if (channels.containsKey(messageToOne.getToOne())){
+            Message message=new Message();
+            BeanUtils.copyProperties(messageToOne,message);
+            channels.get(messageToOne.getToOne()).writeAndFlush(message);
+            return 1;
         }
+        return 0;//发送失败,可能是目标刚好下线了
     }
-
 
 }
