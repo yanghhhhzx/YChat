@@ -38,7 +38,5 @@ public class Consumer implements RocketMQListener<MessageToOne> {
                 //无线返回异常,因为消息无论如何都会保存到数据库
             }
         }
-
-
     }
 }
