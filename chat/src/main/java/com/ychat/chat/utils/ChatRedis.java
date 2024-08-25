@@ -18,10 +18,11 @@ public class ChatRedis {
     private final RedisTemplate redisTemplate;
 
     public void addChannel(String channelId, String userId) {
-        redisTemplate.opsForValue().set(userId+"_channelId", channelId);
+        redisTemplate.opsForValue().set(userId + "_channelId", channelId);
     }
+
     public void addPost(String userId, String post) {
-        redisTemplate.opsForValue().set(userId+"_post", post);
+        redisTemplate.opsForValue().set(userId + "_post", post);
     }
 
     /**
@@ -31,14 +32,14 @@ public class ChatRedis {
         List<String> list = getUnReadChat(userId);
         Set<String> set = new HashSet<>(list);
         set.add(Chat.toString());
-        redisTemplate.opsForValue().set(userId+"_UnReadChat",set.toString());
+        redisTemplate.opsForValue().set(userId + "_UnReadChat", set.toString());
     }
 
     /**
      * 获取需要获取信息的群聊
      */
     public List<String> getUnReadChat(String userId) {
-        String UnReadChat=(String) redisTemplate.opsForValue().get(userId+"_UnReadChat");
+        String UnReadChat = (String) redisTemplate.opsForValue().get(userId + "_UnReadChat");
         List<String> list = Transition.StringToList(UnReadChat);
         return list;
     }
@@ -47,22 +48,25 @@ public class ChatRedis {
      * 读取用户上次登录的时间
      */
     public String getLastTime(String userId) {
-        String lastTime=(String) redisTemplate.opsForValue().get(userId+"_LastTime");
+        String lastTime = (String) redisTemplate.opsForValue().get(userId + "_LastTime");
         return lastTime;
     }
 
     public String getChannelId(String userId) {
-        return (String) redisTemplate.opsForValue().get(userId+"_channelId");
+        return (String) redisTemplate.opsForValue().get(userId + "_channelId");
     }
+
     public String getPost(String userId) {
-        return (String) redisTemplate.opsForValue().get(userId+"_post");
+        return (String) redisTemplate.opsForValue().get(userId + "_post");
     }
 
     public void removeUnReadChat(String userId) {
-        redisTemplate.delete(userId+"_UnReadChat");
+        redisTemplate.delete(userId + "_UnReadChat");
     }
 
     public void setLastTime(String userId) {
-        redisTemplate.opsForValue().set(userId+"_UnReadChat",userId);
+        redisTemplate.opsForValue().set(userId + "_UnReadChat", userId);
     }
+
+}
 
