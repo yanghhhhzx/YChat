@@ -21,7 +21,7 @@ import java.util.UUID;
 
 @Api(tags = "文章相关接口")
 @RestController
-@RequestMapping("/chat")
+@RequestMapping("/articles")
 @RequiredArgsConstructor
 @Slf4j
 public class ArticleController {
@@ -32,9 +32,7 @@ public class ArticleController {
     @ApiOperation("创建动态接口")
     @PostMapping(value = "insert")
     public int insert(@RequestBody @Validated ArticleDTO articleDTO) {
-
         articleService.save(articleDTO);
-
         return 1;
     }
 

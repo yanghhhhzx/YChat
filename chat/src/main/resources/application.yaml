@@ -2,7 +2,7 @@ server:
   port: 8081
 
 websocket:
-  port: 8888
+  port: 8866
 
 spring:
   application:

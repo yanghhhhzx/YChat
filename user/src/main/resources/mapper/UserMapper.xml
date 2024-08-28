@@ -17,7 +17,6 @@
         </set>
     </update>
     <select id="getUserByObject" resultType="com.ychat.user.domain.po.User">
-
         select * from user
         <where>
             <if test="username != null">
