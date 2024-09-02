@@ -19,14 +19,11 @@ import com.ychat.user.mapper.UserRedis;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.checkerframework.checker.units.qual.A;
 import org.json.JSONObject;
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -51,30 +48,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      */
     @Override
     public UserLoginVO login(LoginFormDTO loginDTO) {
-        // 1.数据校验
+        // 数据校验
         String username = loginDTO.getUsername();
         String password = loginDTO.getPassword();
-        // 2.根据用户名或手机号查询
-        //
-//        //下面是对lambda的修改
-//        QueryWrapper queryWrapper = new QueryWrapper();
-//        queryWrapper.eq("username", username);
-//        User user = getOne(queryWrapper);
-
+        UserLoginVO userLoginVO = new UserLoginVO();
         User user = userMapper.getUserByName(username);
-
-        Assert.notNull(user, "用户名错误");
-        // 3.校验是否禁用
-        if (user.getStatus() == UserStatus.FROZEN) {
-            throw new ForbiddenException("用户被冻结");
+        if (user == null) {
+            userLoginVO.setCode("2");//用户名或密码错误
+            return userLoginVO;
         }
-        // 4.校验密码
-        //这里的user是根据id从数据库查到的
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new BadRequestException("用户名或密码错误");
+        // 校验是否禁用
+        else if (user.getStatus() == UserStatus.FROZEN) {
+            userLoginVO.setCode("1");//用户被冻结
+            return userLoginVO;
+        }
+        // 校验密码
+        else if (!passwordEncoder.matches(password, user.getPassword())) {
+            userLoginVO.setCode("2");//用户名或密码错误
+            return userLoginVO;
         }
         //生成token并封装VO返回
-        return UserLoginVO.NewVo(user, jwtTool, jwtProperties);
+        else return UserLoginVO.NewVo(user, jwtTool, jwtProperties);
     }
 
     /**

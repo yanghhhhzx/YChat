@@ -14,6 +14,7 @@ public class UserLoginVO {
     private Sex sex;
     private String image;
     private Integer balance;
+    private String code;//"1"为冻结."2"为账号或密码错误
 
 //    封装VO返回
     public static UserLoginVO NewVo(User user, JwtTool jwtTool, JwtProperties jwtProperties){
