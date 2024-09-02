@@ -50,3 +50,10 @@ ychat:
     alias: hmall
     password: hmall123
     tokenTTL: 51264000m
+
+#  GitHub认证相关参数
+github:
+  client:
+    #    下面这两个填刚刚登记后的返回
+    id: xxx
+    secret: xxx

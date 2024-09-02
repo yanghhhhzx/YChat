@@ -15,9 +15,12 @@ import com.ychat.user.enums.UserStatus;
 import com.ychat.user.mapper.UserMapper;
 import com.ychat.user.service.IUserService;
 import com.ychat.user.utils.JwtTool;
-import com.ychat.user.utils.UserRedis;
+import com.ychat.user.mapper.UserRedis;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
+import org.checkerframework.checker.units.qual.A;
+import org.json.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -70,18 +73,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new BadRequestException("用户名或密码错误");
         }
-        // 5.生成TOKEN
-        //todo 这里现在是根据id来加token的，但我希望根据username
-        String token = jwtTool.createToken(user.getId(), jwtProperties.getTokenTTL());
-        // 6.封装VO返回
-        UserLoginVO vo = new UserLoginVO();
-        vo.setUserId(user.getId());
-        vo.setUsername(user.getUsername());
-        vo.setBalance(user.getBalance());
-        vo.setImage(user.getImage());
-        vo.setSex(user.getSex());
-        vo.setToken(token);
-        return vo;
+        //生成token并封装VO返回
+        return UserLoginVO.NewVo(user, jwtTool, jwtProperties);
     }
 
     /**
@@ -138,21 +131,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if(user != null){
             return 0; //该用户名已经存在
         }
-        else {
+        else if (userDTO.getPhone()!=null){
             user=userMapper.getUserByPhone(userDTO.getPhone());
             if(user != null){
                 return 2; //该手机号已经存在
             }
         }
-        User user1=new User();
-        BeanUtils.copyProperties(userDTO,user1);
-        user1.setCreateTime(LocalDateTime.now());
-        user1.setUpdateTime(LocalDateTime.now());
-        user1.setPassword(passwordEncoder.encode(userDTO.getPassword()));
-        userMapper.insertUser(user1);
-        User user2=userMapper.getUserByName(user1.getUsername());
-        //创建他的Time，用于管理他的最后登录时间
-        userRedis.addTime(user2.getId().toString());
+        User.creatUserByUserDto(userDTO,passwordEncoder,userMapper);
         return 1 ;//成功插入
     }
 
@@ -170,6 +155,43 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             }
         }
         return 1;
+    }
+
+    @Override
+    public UserLoginVO LoginWithGithub(JSONObject jsonObject) {
+
+        jsonObject.get("id");
+        String username =userMapper.getUserInGithub(jsonObject.getString("id"));
+        User user=new User();
+
+        if (username != null) {//说明该用户已经存在，直接登录
+            user = userMapper.getUserByName(username);
+
+            // 校验是否禁用
+            if (user.getStatus() == UserStatus.FROZEN) {
+                throw new ForbiddenException("用户被冻结");
+            }
+
+        }
+        else {
+            //否则，说明不存在，需要注册一个用户
+            UserDTO userDTO=new UserDTO();
+            //生成随机密码
+            userDTO.setPassword(RandomStringUtils.randomAlphanumeric(6));
+            //生成9位的随机用户名，每一位为随机ASCII字符串，包含从32到126
+            userDTO.setUsername(RandomStringUtils.randomAscii(9));
+            int answer=newUser(userDTO);//尝试创建用户
+            while (answer==0){
+                //重新循环生成用户名
+                userDTO.setUsername(RandomStringUtils.randomAscii(12));
+                answer=newUser(userDTO);
+            }
+            user = userMapper.getUserByName(userDTO.getUsername());
+        }
+
+        //生成token并封装VO返回
+        return UserLoginVO.NewVo(user, jwtTool, jwtProperties);
+
     }
 
 }

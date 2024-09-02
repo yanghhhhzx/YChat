@@ -5,6 +5,7 @@ import com.ychat.user.domain.dto.UserDTO;
 import com.ychat.user.domain.po.User;
 import com.ychat.user.domain.vo.UserLoginVO;
 import com.ychat.user.domain.dto.LoginFormDTO;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -39,4 +40,6 @@ public interface IUserService extends IService<User> {
     int newUser(UserDTO userDTO);
 
     int existUsers(List<String> userIds);
+
+    UserLoginVO LoginWithGithub(JSONObject jsonObject);
 }

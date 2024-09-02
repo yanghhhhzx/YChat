@@ -24,4 +24,7 @@ public interface UserMapper extends BaseMapper<User> {
     @Insert("insert into user_0(username,password,image,sex,create_time,update_time,phone) " +
             "values(#{username},#{password},#{image},#{sex},#{createTime},#{updateTime},#{phone}) ")
     void insertUser(User user1);
+
+    @Select("select username from git_user where git_id = #{id}")
+    String getUserInGithub(String id);
 }

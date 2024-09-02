@@ -1,4 +1,4 @@
-package com.ychat.user.utils;
+package com.ychat.user.mapper;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

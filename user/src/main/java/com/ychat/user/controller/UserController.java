@@ -1,5 +1,6 @@
 package com.ychat.user.controller;
 
+import com.ychat.user.domain.AccessTokenResponse;
 import com.ychat.user.domain.dto.UserDTO;
 import com.ychat.user.domain.po.User;
 import io.swagger.annotations.Api;
@@ -8,11 +9,20 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import com.ychat.user.domain.dto.LoginFormDTO;
 import com.ychat.user.domain.vo.UserLoginVO;
 import com.ychat.user.service.IUserService;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -28,6 +38,17 @@ import java.util.UUID;
 public class UserController {
 
     private final IUserService userService;
+
+    @Value("${github.client.id}")
+    private String clientId;
+
+    @Value("${github.client.secret}")
+    private String clientSecret;
+
+    @Autowired
+    //利用名称来标记，指定我需要注入的bean为RestTemplateConfig中的那个bean，不然会注入普通的restTemplate
+    @Qualifier("myRestTemplate")
+    private RestTemplate restTemplate ;
 
     @ApiOperation("用户登录接口")
     @PostMapping(value = "login")
@@ -103,6 +124,38 @@ public class UserController {
     public int existUsers(@RequestBody List<String> userIds){
         return userService.existUsers(userIds);
     }
+
+    @GetMapping("/oauth/redirect")//填刚刚在登记时写的重定向url
+    public UserLoginVO handleRedirect(@RequestParam("code") String code) {
+        // 1.拿token
+        // 1.1 利用认证信息，生成获取Token的Url，准备获取token
+        String tokenUrl = "https://github.com/login/oauth/access_token" +
+                "?client_id=" + clientId +
+                "&client_secret=" + clientSecret +
+                "&code=" + code;
+        // 1.2使用restTemplate向GitHub发送请求，获取Token
+        AccessTokenResponse tokenResponse = restTemplate.postForObject(tokenUrl, null, AccessTokenResponse.class);
+        // 1.3从响应体拿到Token数据
+        String accessToken = tokenResponse.getAccessToken();
+
+        // 2.携带Token，再次向GitHub发送请求，获取用户信息
+        // 2.1 生成URL
+        String apiUrl = "https://api.github.com/user";
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "token " + accessToken);
+        HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
+        // 2.2 发送请求
+        ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, String.class);
+        // 2.3 拿到用户信息
+        String body = response.getBody();
+        System.out.println(body);
+        JSONObject jsonObject=new JSONObject(body);
+
+        //需要处理用户信息如：检查该用户是否已有账号，有账号则定位到那个账号，无账号这创建账号
+        return userService.LoginWithGithub(jsonObject);
+    }
+
+
 
 }
 

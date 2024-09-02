@@ -8,6 +8,7 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Slf4j
@@ -65,7 +66,12 @@ public class ChatRedis {
     }
 
     public void setLastTime(String userId) {
-        redisTemplate.opsForValue().set(userId + "_UnReadChat", userId);
+        Date now = new Date();
+        // 创建一个SimpleDateFormat对象，定义时间格式
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        // 使用SimpleDateFormat对象的format方法将Date对象格式化为字符串
+        String dateString = dateFormat.format(now);
+        redisTemplate.opsForValue().set(userId+"_LastTime", dateString);
     }
 
 }

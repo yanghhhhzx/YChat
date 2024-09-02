@@ -3,11 +3,15 @@ package com.ychat.user.domain.po;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.ychat.user.domain.dto.UserDTO;
 import com.ychat.user.enums.Sex;
+import com.ychat.user.mapper.UserMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 import com.ychat.user.enums.UserStatus;
+import org.springframework.beans.BeanUtils;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -56,5 +60,16 @@ public class User implements Serializable {
      */
     private Sex sex;
     private String chat;//使用方案2时的群聊
+
+    public static void creatUserByUserDto(UserDTO userDTO , PasswordEncoder passwordEncoder, UserMapper userMapper){
+
+        User user1=new User();
+        BeanUtils.copyProperties(userDTO,user1);
+        user1.setCreateTime(LocalDateTime.now());
+        user1.setUpdateTime(LocalDateTime.now());
+        user1.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        userMapper.insertUser(user1);
+
+    }
 
 }
