@@ -57,3 +57,10 @@ github:
     #    下面这两个填刚刚登记后的返回
     id: xxx
     secret: xxx
+
+#  GitHub认证相关参数
+wx:
+  app:
+    #    下面这两个填刚刚登记后的返回
+    id: xxx
+    secret: xxx

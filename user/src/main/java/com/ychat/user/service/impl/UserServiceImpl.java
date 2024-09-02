@@ -159,18 +159,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Override
     public UserLoginVO LoginWithGithub(JSONObject jsonObject) {
-
         String username =userMapper.getUserInGithub(jsonObject.getString("id"));
         User user=new User();
 
         if (username != null) {//说明该用户已经存在，直接登录
             user = userMapper.getUserByName(username);
-
             // 校验是否禁用
             if (user.getStatus() == UserStatus.FROZEN) {
                 throw new ForbiddenException("用户被冻结");
             }
-
         }
         else {
             //否则，说明不存在，需要注册一个用户
@@ -188,10 +185,42 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             userMapper.InsertGithubUser(jsonObject.getString("id"),userDTO.getUsername());
             user = userMapper.getUserByName(userDTO.getUsername());
         }
-
         //生成token并封装VO返回
         return UserLoginVO.NewVo(user, jwtTool, jwtProperties);
 
+    }
+
+    @Override
+    public UserLoginVO LoginWithWx(JSONObject jsonObject) {
+
+        String username =userMapper.getUserInWx(jsonObject.getString("id"));
+        User user=new User();
+
+        if (username != null) {//说明该用户已经存在，直接登录
+            user = userMapper.getUserByName(username);
+            // 校验是否禁用
+            if (user.getStatus() == UserStatus.FROZEN) {
+                throw new ForbiddenException("用户被冻结");
+            }
+        }
+        else {
+            //否则，说明不存在，需要注册一个用户
+            UserDTO userDTO=new UserDTO();
+            //生成随机密码
+            userDTO.setPassword(RandomStringUtils.randomAlphanumeric(6));
+            //生成9位的随机用户名，每一位为随机ASCII字符串，包含从32到126
+            userDTO.setUsername(RandomStringUtils.randomAscii(9));
+            int answer=newUser(userDTO);//尝试创建用户
+            while (answer==0){
+                //重新循环生成用户名
+                userDTO.setUsername(RandomStringUtils.randomAscii(12));
+                answer=newUser(userDTO);
+            }
+            userMapper.InsertWxUser(jsonObject.getString("id"),userDTO.getUsername());
+            user = userMapper.getUserByName(userDTO.getUsername());
+        }
+        //生成token并封装VO返回
+        return UserLoginVO.NewVo(user, jwtTool, jwtProperties);
     }
 
 }

@@ -30,4 +30,11 @@ public interface UserMapper extends BaseMapper<User> {
 
     @Insert("insert into git_user(username,git_id) values(#{username},#{id})")
     void InsertGithubUser(String id,String username);
+
+    @Select("select username from wx_user where git_id = #{id}")
+    String getUserInWx(String id);
+
+    @Insert("insert into wx_user(username,git_id) values(#{username},#{id})")
+    void InsertWxUser(String id,String username);
+
 }

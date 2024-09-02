@@ -39,11 +39,17 @@ public class UserController {
 
     private final IUserService userService;
 
+    //github相关
     @Value("${github.client.id}")
     private String clientId;
-
     @Value("${github.client.secret}")
     private String clientSecret;
+
+    //微信相关
+    @Value("${wx.app.id}")
+    private String appId;
+    @Value("${wx.app.secret}")
+    private String appSecret;
 
     @Autowired
     //利用名称来标记，指定我需要注入的bean为RestTemplateConfig中的那个bean，不然会注入普通的restTemplate
@@ -153,6 +159,39 @@ public class UserController {
 
         //需要处理用户信息如：检查该用户是否已有账号，有账号则定位到那个账号，无账号这创建账号
         return userService.LoginWithGithub(jsonObject);
+    }
+
+
+    @GetMapping("/oauth/wx/redirect")//填刚刚在登记时写的重定向url
+    public UserLoginVO wxRedirect(@RequestParam("code") String code) {
+        // 1.拿token
+        // 1.1 利用认证信息，生成获取Token的Url，准备获取token
+        String tokenUrl = "https://api.weixin.qq.com/sns/oauth2/access_token?" +
+                "appid=" + appId +
+                "secret=" + appSecret +
+                "&code=" + code+"&grant_type=authorization_code";
+        // 1.2使用restTemplate发送请求，获取Token
+        AccessTokenResponse tokenResponse = restTemplate.postForObject(tokenUrl, null, AccessTokenResponse.class);
+        // 1.3从响应体拿到Token数据
+        String accessToken = tokenResponse.getAccessToken();
+
+        // 2.携带Token，再次向微信发送请求，获取用户信息
+        // 2.1 生成URL
+        // 微信官方文档里是把access_token是直接放在url里的
+        String apiUrl = "https://api.weixin.qq.com/sns/userinfo?"+
+                "access_token=" + accessToken+
+                "&openid=OPENID&lang=zh_CN";
+
+        HttpEntity<String> entity = new HttpEntity<>("parameters", new HttpHeaders());
+        // 2.2 发送请求
+        ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, String.class);
+        // 2.3 拿到用户信息
+        String body = response.getBody();
+        System.out.println(body);
+        JSONObject jsonObject=new JSONObject(body);
+
+        //需要处理用户信息如：检查该用户是否已有账号，有账号则定位到那个账号，无账号这创建账号
+        return userService.LoginWithWx(jsonObject);
     }
 
 

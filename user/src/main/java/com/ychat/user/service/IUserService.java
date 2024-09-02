@@ -42,4 +42,6 @@ public interface IUserService extends IService<User> {
     int existUsers(List<String> userIds);
 
     UserLoginVO LoginWithGithub(JSONObject jsonObject);
+
+    UserLoginVO LoginWithWx(JSONObject jsonObject);
 }
