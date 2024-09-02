@@ -160,7 +160,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     public UserLoginVO LoginWithGithub(JSONObject jsonObject) {
 
-        jsonObject.get("id");
         String username =userMapper.getUserInGithub(jsonObject.getString("id"));
         User user=new User();
 
@@ -186,6 +185,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 userDTO.setUsername(RandomStringUtils.randomAscii(12));
                 answer=newUser(userDTO);
             }
+            userMapper.InsertGithubUser(jsonObject.getString("id"),userDTO.getUsername());
             user = userMapper.getUserByName(userDTO.getUsername());
         }
 
