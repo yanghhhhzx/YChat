@@ -1,7 +1,6 @@
 package com.ychat.user.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ychat.common.exception.BadRequestException;
 import com.ychat.common.exception.BizIllegalException;
 import com.ychat.common.exception.ForbiddenException;
 import com.ychat.common.utils.UserContext;
@@ -22,7 +21,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.json.JSONObject;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 
 import java.util.List;
 

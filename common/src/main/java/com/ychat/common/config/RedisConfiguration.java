@@ -10,7 +10,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Slf4j
 @Configuration
-public class RedisConfigration {
+public class RedisConfiguration {
 
     @SuppressWarnings("all")
     @Bean

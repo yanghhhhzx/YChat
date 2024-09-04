@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient("user_service")
+@FeignClient("user-service")
 public interface UserClient {
 
 //    @PutMapping("/users/money/deduct")

@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: user_service
+    name: user-service
   datasource:
     url: jdbc:shardingsphere:classpath:shardingsphere-config.yaml
     driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver

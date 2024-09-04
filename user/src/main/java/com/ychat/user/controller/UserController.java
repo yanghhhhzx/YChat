@@ -97,6 +97,7 @@ public class UserController {
     @ApiOperation("新增用户")
     @PostMapping
     public int newUser(@RequestBody UserDTO userDTO){
+        System.out.println("新增用户");
         int result=userService.newUser(userDTO);
         return result;
     }

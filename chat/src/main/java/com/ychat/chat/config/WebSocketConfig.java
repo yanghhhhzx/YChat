@@ -38,12 +38,17 @@ public class WebSocketConfig {
     private final ChatService chatService;
     private final JwtTool jwtTool;
     private final Producer producer;
+
+    public static String websocketPost;//静态变量不能直接注入
     @Value("${websocket.port}")
-    public static String websocketPost;
+    public void setWebsocketPort(String port) {
+        websocketPost = port;
+    }
 
     // 在应用启动时启动Netty服务器
     @PostConstruct
     public void startNettyServer() {
+        System.out.println(websocketPost);
         //主线程池：负责接收客户端的连接请求
         EventLoopGroup bossGroup = new NioEventLoopGroup();
         //从线程池：负责处理已经建立连接的客户端的读写请求
