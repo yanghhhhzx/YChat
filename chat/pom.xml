@@ -51,45 +51,38 @@
             <groupId>com.alibaba.cloud</groupId>
             <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-rsa</artifactId>
         </dependency>
-
         <!--  netty-->
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
             <version>4.1.92.Final</version>
         </dependency>
-
         <!-- 分库分表sharding-->
         <dependency>
             <groupId>org.apache.shardingsphere</groupId>
             <artifactId>shardingsphere-jdbc-core</artifactId>
             <version> 5.3.0</version>
         </dependency>
-
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
             <version>1.33</version>
         </dependency>
-
         <!--Spring data redis -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
-
         <!--  解决RedisTemplate在springboot高版本报错问题，但是无效-->
 <!--        <dependency>-->
 <!--            <groupId>io.lettuce</groupId>-->
 <!--            <artifactId>lettuce-core</artifactId>-->
 <!--            <version>6.1.9.RELEASE</version>-->
 <!--        </dependency>-->
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-websocket</artifactId>
@@ -110,15 +103,12 @@
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
             <version> 2.3.9.RELEASE</version>
         </dependency>
-
         <!--    rocketmq-->
         <dependency>
             <groupId>org.apache.rocketmq</groupId>
             <artifactId>rocketmq-spring-boot-starter</artifactId>
             <version>2.0.3</version>
         </dependency>
-
-
     </dependencies>
     <build>
         <finalName>${project.artifactId}</finalName>

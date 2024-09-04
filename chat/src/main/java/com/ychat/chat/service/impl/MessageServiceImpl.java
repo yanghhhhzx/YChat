@@ -6,7 +6,6 @@ import com.ychat.chat.mapper.MessageMapper;
 import com.ychat.chat.service.MessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 

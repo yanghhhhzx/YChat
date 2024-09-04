@@ -1,10 +1,8 @@
-package com.ychat.chat.utils;
+package com.ychat.chat.mapper;
 
-import com.ychat.chat.domain.Message;
 import com.ychat.common.utils.transition.Transition;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 

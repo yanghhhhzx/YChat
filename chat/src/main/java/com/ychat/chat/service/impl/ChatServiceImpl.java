@@ -24,7 +24,10 @@ public class ChatServiceImpl extends ServiceImpl<ChatMapper, Chat> implements Ch
     public void addChat(Chat chat) {
         SnowFlake snowFlake=new SnowFlake(1,1,1);
         chat.setId(snowFlake.nextId());
-        save(chat);
+//        chat.setId(String.valueOf(snowFlake.nextId()));
+        System.out.println("生成群聊id为"+chat.getId());
+        //不能用mp的方法，因为他的save方法会默认去掉你的id，导致无法分库
+        chatMapper.addChat(chat);
     }
 
     @Override

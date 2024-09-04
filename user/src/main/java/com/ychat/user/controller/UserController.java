@@ -127,7 +127,7 @@ public class UserController {
     }
 
     @ApiOperation("检测是否存在该成员")
-    @GetMapping("/existUsers")
+    @PostMapping("/existUsers")
     public int existUsers(@RequestBody List<String> userIds){
         return userService.existUsers(userIds);
     }

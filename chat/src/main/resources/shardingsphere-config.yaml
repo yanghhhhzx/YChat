@@ -21,20 +21,20 @@ rules:
         databaseStrategy:
           standard:
             shardingColumn: id
-            shardingAlgorithmName: chat_database_hash_mod
+            shardingAlgorithmName: chat_database_mod
         tableStrategy:
           standard:
             shardingColumn: id
-            shardingAlgorithmName: chat_table_hash_mod
+            shardingAlgorithmName: chat_table_mod
 
     shardingAlgorithms:
-      chat_database_hash_mod:
-        type: MOD
+      chat_database_mod:
+        type: HASH_MOD
         props:
           sharding-count: 2
 
-      chat_table_hash_mod:
-        type: MOD
+      chat_table_mod:
+        type: HASH_MOD
         props:
           sharding-count: 2
 

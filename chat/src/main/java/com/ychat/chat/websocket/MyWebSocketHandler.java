@@ -7,7 +7,7 @@ import com.ychat.chat.domain.Message;
 import com.ychat.chat.domain.MessageToOne;
 import com.ychat.chat.service.ChatService;
 import com.ychat.chat.service.MessageService;
-import com.ychat.chat.utils.ChatRedis;
+import com.ychat.chat.mapper.ChatRedis;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;

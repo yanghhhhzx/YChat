@@ -141,7 +141,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     @Override
     public int existUsers(List<String> userIds) {
         for (String userId: userIds){
-            User user=userMapper.getUserByName(userId);
+            User user=userMapper.getUserById(userId);
             if(user == null){
                 return 0;
             }

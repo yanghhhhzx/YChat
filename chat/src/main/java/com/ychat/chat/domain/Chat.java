@@ -1,5 +1,6 @@
 package com.ychat.chat.domain;
 
+import com.baomidou.mybatisplus.annotation.TableId;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +14,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Chat {
+
     private long id;
 
     @ApiModelProperty(value = "群聊名", required = true)
@@ -22,5 +24,5 @@ public class Chat {
     @ApiModelProperty(value = "成员", required = true)
     @NotNull(message = "成员不能为空")
     private String member;
-    private String owner;//群主
+    private String owner_name;//群主
 }

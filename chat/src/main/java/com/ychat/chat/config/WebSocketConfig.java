@@ -4,7 +4,7 @@ import com.ychat.chat.service.ChatService;
 import com.ychat.chat.service.MessageService;
 import com.ychat.chat.service.Producer;
 import com.ychat.chat.utils.ChannelContext;
-import com.ychat.chat.utils.ChatRedis;
+import com.ychat.chat.mapper.ChatRedis;
 import com.ychat.chat.utils.JwtTool;
 import com.ychat.chat.websocket.FilterHandler;
 import com.ychat.chat.websocket.HttpRequestHandler;
