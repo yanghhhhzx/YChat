@@ -70,8 +70,11 @@ public class ChatController {
     //todo 测试和修改
     @PostMapping(value = "sendMessage/{channelId}")
     public int sendMessageByUserId(@RequestBody Message message,@PathVariable String UserId ) {
-        channels.get(UserId).writeAndFlush(message);;
-        return 1;
+        if (channels.contains(UserId)) {
+            channels.get(UserId).writeAndFlush(message);
+            return 1;
+        }
+        else return 0;
     }
 
 

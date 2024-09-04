@@ -25,9 +25,10 @@ public class Message {
 
     public static Message getMessageByMsg(String sender,TextWebSocketFrame msg) {
         //获取msg中数据并分词
-        String[] a = msg.text().split(",", 3);
+        String[] a = msg.text().split(",", 2);
         Long chatId = null;
-            chatId = Long.parseLong(a[0]);
+        chatId = Long.parseLong(a[0]);
+        //用于测试 chatId = Long.parseLong("13015322521112576");
         if (chatId == null) {
             System.out.println("无法创建message");
         }

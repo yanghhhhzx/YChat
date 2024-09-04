@@ -78,12 +78,18 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<TextWebSocke
         List<ChannelHandlerContext> channelHandlerContexts = new ArrayList<>();
         for (String memberId : memberIds) {
             String post = chatRedis.getPost(memberId);
-            //利用RocketMQ发送异步消息
             MessageToOne messageToOne=new MessageToOne();
             //复制一个
             BeanUtils.copyProperties(message,messageToOne);
             messageToOne.setToOne(memberId);
-            if (post != null) {producer.asyncSend(WebSocketConfig.websocketPost,messageToOne);}
+            //利用RocketMQ发送异步消息 todo 为了测试先注释掉
+//            if (post != null) {producer.asyncSend(WebSocketConfig.websocketPost,messageToOne);}
+
+            //*****下面代码只是方便测试：给自己发一个短信:*****
+            messageToOne.setToOne(message.getId());//把id改为当前用户
+            sendMessageByUserId(messageToOne);
+            ctx.writeAndFlush("发送成功");
+            //*****上面代码只是方便测试：给自己发一个短信 *****
         }
         //3.对信息包含的群聊的所有成员的未读群聊表进行更新（已经登录的人员会在断开连接时清除）
         for (String memberId : memberIds) {
@@ -91,10 +97,12 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<TextWebSocke
                 chatRedis.addChatIntoUnRead(message.getChat(), memberId);
             }
         }
+
         super.channelRead(ctx, msg);
     }
 
     public static int sendMessageByUserId(MessageToOne messageToOne){
+        //如果发现当前hashmap里有目标
         if (channels.containsKey(messageToOne.getToOne())){
             Message message=new Message();
             BeanUtils.copyProperties(messageToOne,message);

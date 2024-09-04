@@ -27,6 +27,7 @@ rules:
             shardingColumn: id
             shardingAlgorithmName: chat_table_mod
 
+# 分片算法
     shardingAlgorithms:
       chat_database_mod:
         type: HASH_MOD

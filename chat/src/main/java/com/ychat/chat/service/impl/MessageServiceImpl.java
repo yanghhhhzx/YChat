@@ -26,7 +26,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper,Message> imple
 
     @Override
     public void saveMessageIntoMysql(Message message) {
-        save(message);
+        messageMapper.addMessage(message);
     }
 
 

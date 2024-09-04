@@ -39,7 +39,7 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
             HttpRequest request = (HttpRequest) msg;
             // 1.获取请求头信息
             String userInfo = request.headers().get("user-info");
-            System.out.println("获取到user"+userInfo);
+            System.out.println("获取到user,id:"+userInfo);
 
             //把userid放入channel的上下文中，后面发送的时候要用
             //下面这个ChannelContext是我自己定义的！不是netty包下的那个。
@@ -58,12 +58,13 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
             //放在这里。保证他是只有在建立连接时会执行（因为只有建立连接是http）
             //**************************************************
 
-            List<String>chatIds =channelRedis.getUnReadChat(userInfo);//获取chat
-            List<Long> chatList=Transition.StringListToLongList(chatIds);//转换chat
-            String time=channelRedis.getLastTime(userInfo);//获取time
-            List<Message>messages= messageService.getNewMessagesFromMysql(chatList,time);//获取message
-
-            this.sendMessage(ctx,messages);
+            System.out.println("暂时不执行");
+//            List<String>chatIds =channelRedis.getUnReadChat(userInfo);//获取chat
+//            List<Long> chatList=Transition.StringListToLongList(chatIds);//转换chat
+//            String time=channelRedis.getLastTime(userInfo);//获取time
+//            List<Message>messages= messageService.getNewMessagesFromMysql(chatList,time);//获取message
+//
+//            this.sendMessage(ctx,messages);
         }
 
         super.channelRead(ctx, msg);

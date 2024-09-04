@@ -1,7 +1,5 @@
 package com.ychat.chat.service;
 
-import com.ychat.chat.config.WebSocketConfig;
-import com.ychat.chat.domain.Message;
 import com.ychat.chat.domain.MessageToOne;
 import com.ychat.chat.websocket.MyWebSocketHandler;
 import org.apache.rocketmq.spring.annotation.MessageModel;
@@ -17,13 +15,15 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @RocketMQMessageListener(
-        topic = "8888",                           // 1.topic：消息的发送者使用同一个topic
+        //todo 要根据监听当前实例的端口改
+        topic = "8866",                           // 1.topic：消息的发送者使用同一个topic
         consumerGroup = "group1",                 // 2.group：这东西无所谓,不用和生产者group相同,消息订阅全看topic,(在RocketMQ中消费者和发送者组没有关系,)
         selectorExpression = "*",                 // 3.tag：设置为 * 时，表示全部。
         messageModel = MessageModel.CLUSTERING    // 4.消费模式：默认 CLUSTERING （ CLUSTERING：负载均衡 ）（ BROADCASTING：广播机制 ）
 )
 public class Consumer implements RocketMQListener<MessageToOne> {
 
+    //这个消费者只是用来发送消息的
     @Override
     public void onMessage(MessageToOne messageToOne) {
         try {
