@@ -23,7 +23,6 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerProtocolHandler;
 import io.netty.handler.stream.ChunkedWriteHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 
@@ -89,7 +88,6 @@ public class WebSocketConfig {
                         // 自定义WebSocket处理器
 
                         pipeline.addLast(new MyWebSocketHandler(messageService, chatService, chatRedis,producer));
-
 
                     }
                 });

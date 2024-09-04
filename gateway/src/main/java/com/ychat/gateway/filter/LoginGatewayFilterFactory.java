@@ -1,7 +1,7 @@
 package com.ychat.gateway.filter;
 
-import com.hmall.common.exception.UnauthorizedException;
-import com.hmall.common.utils.CollUtils;
+import com.ychat.common.exception.UnauthorizedException;
+import com.ychat.common.utils.CollUtils;
 import com.ychat.gateway.config.AuthProperties;
 import com.ychat.gateway.utils.JwtTool;
 import lombok.RequiredArgsConstructor;
