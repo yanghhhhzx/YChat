@@ -66,8 +66,9 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<TextWebSocke
 
         //1.根据chat在数据库中找到该群聊的所有成员。
         QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("chat", message.getChat());
+        queryWrapper.eq("id", message.getChat());
         Chat chat = chatService.getOne(queryWrapper);
+        System.out.println("从数据库中读取到成员成功："+chat.getMember());
 
         //这里存储采用的是方法2，利用字段member存储成员，获取改群聊的成员id
         List<String> memberIds = Transition.StringToList(chat.getMember());

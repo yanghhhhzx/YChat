@@ -30,7 +30,7 @@ public class Message {
         String[] a = msg.text().split(",", 2);
         Long chatId = null;
         chatId = Long.parseLong(a[0]);
-        //用于测试 chatId = Long.parseLong("13015322521112576");
+        //用于测试 chatId = Long.parseLong("13233828642557952");
         if (chatId == null) {
             System.out.println("无法创建message");
         }
