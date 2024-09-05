@@ -73,6 +73,7 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
     // 客户端与服务器建立连接的时候触发
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
+        ctx.writeAndFlush("开启连接\n");
         System.out.println("通道开启！");
         super.channelActive(ctx);
     }
@@ -87,6 +88,7 @@ public class HttpRequestHandler extends ChannelInboundHandlerAdapter {
     // 客户端与服务器关闭连接的时候触发
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        ctx.writeAndFlush("断开连接\n");
         System.out.println("断开连接：通道关闭！");
         String userId=ChannelContext.getcontext(ctx.channel(),"userId");
         channelRedis.removeUnReadChat(userId);//删除UnReadChat
