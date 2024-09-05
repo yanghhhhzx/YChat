@@ -13,11 +13,25 @@ dataSources:
     username: root
     password: 123
 
+  message_db0:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    jdbcUrl: jdbc:mysql://192.168.232.128:3306/ychat_message_0?useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123
+
+  message_db1:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    jdbcUrl: jdbc:mysql://192.168.232.128:3306/ychat_message_1?useUnicode=true&characterEncoding=UTF-8&rewriteBatchedStatements=true&allowMultiQueries=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: 123
+
 rules:
   - !SHARDING
     tables:
       chat:
-        actualDataNodes: ds_${0..1}.chat_${0..1}
+        actualDataNodes: ds_$->{0..1}.chat_$->{0..1}
         databaseStrategy:
           standard:
             shardingColumn: id
@@ -26,6 +40,17 @@ rules:
           standard:
             shardingColumn: id
             shardingAlgorithmName: chat_table_mod
+      message:
+        actualDataNodes: message_db$->{0..1}.message_$->{0..1}
+        databaseStrategy:
+          standard:
+            shardingColumn: chat
+            shardingAlgorithmName: chat_database_mod
+        tableStrategy:
+          standard:
+            shardingColumn: chat
+            shardingAlgorithmName: chat_table_mod
+
 
 # 分片算法
     shardingAlgorithms:

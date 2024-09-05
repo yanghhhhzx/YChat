@@ -13,6 +13,6 @@ public interface MessageMapper extends BaseMapper<Message> {
 
     List<Message> selectMessageByChatIdAndTime(List<Long> chatIds, Date time);
 
-    @Insert("insert into ychat_message_0.message_0 ( content, send_time, sender, chat, type, ttl ) VALUES ( #{content}, #{sendTime}, #{sender}, #{chat}, #{type}, #{ttl} )")
+    @Insert("insert into message ( id,content, send_time, sender, chat, type) VALUES ( #{id},#{content}, #{sendTime}, #{sender}, #{chat}, #{type} )")
     void addMessage(Message message);
 }

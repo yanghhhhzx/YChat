@@ -86,7 +86,7 @@ public class MyWebSocketHandler extends SimpleChannelInboundHandler<TextWebSocke
 //            if (post != null) {producer.asyncSend(WebSocketConfig.websocketPost,messageToOne);}
 
             //*****下面代码只是方便测试：给自己发一个短信:*****
-            messageToOne.setToOne(message.getId());//把id改为当前用户
+            messageToOne.setToOne(message.getSender());//把id改为当前用户
             sendMessageByUserId(messageToOne);
             ctx.writeAndFlush("发送成功");
             //*****上面代码只是方便测试：给自己发一个短信 *****

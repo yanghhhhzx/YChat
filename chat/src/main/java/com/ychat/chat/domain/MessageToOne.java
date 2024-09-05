@@ -7,7 +7,7 @@ import lombok.Data;
 public class MessageToOne {
     private String ToOne;          //要发送给的目标
 
-    private String id;
+    private long id;
     private String content;
     private String sendTime;
     private String sender;      //发送者id

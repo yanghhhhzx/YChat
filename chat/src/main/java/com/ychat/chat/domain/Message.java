@@ -1,5 +1,6 @@
 package com.ychat.chat.domain;
 
+import com.ychat.common.utils.SnowFlake;
 import com.ychat.common.utils.transition.Transition;
 import io.netty.handler.codec.http.websocketx.TextWebSocketFrame;
 import lombok.AllArgsConstructor;
@@ -14,7 +15,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Message {
-    private String id;
+    private long id;
     private String content;
     private String sendTime;
     private String sender;      //发送者id
@@ -25,6 +26,7 @@ public class Message {
 
     public static Message getMessageByMsg(String sender,TextWebSocketFrame msg) {
         //获取msg中数据并分词
+        SnowFlake snowFlake=new SnowFlake(1,1,1);
         String[] a = msg.text().split(",", 2);
         Long chatId = null;
         chatId = Long.parseLong(a[0]);
@@ -37,13 +39,12 @@ public class Message {
         String content = a[1];
         Date now = new Date();
         String dateString= Transition.DateToString(now);
-        Message message = Message.builder()
+        return Message.builder()
+                .id(snowFlake.nextId())
                 .content(content)
                 .sender(sender)
                 .chat(chatId)
                 .sendTime(dateString)
                 .build();
-
-        return message;
     }
 }

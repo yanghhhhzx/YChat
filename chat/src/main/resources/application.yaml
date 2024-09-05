@@ -55,7 +55,7 @@ logging:
 knife4j:
   enable: true
   openapi:
-    title: 用户接口文档
+    title: 聊天接口文档
     description: "信息"
     version: v1.0.0
     group:
